@@ -1,0 +1,8 @@
+result*
+.direnv
+book/
+SUMMARY.md
+*.nix.md
+nix/nix.conf.md
+opt-local.nix
+.ccache/

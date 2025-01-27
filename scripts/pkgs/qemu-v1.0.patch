@@ -1,0 +1,156 @@
+diff --git a/linux-user/strace.c b/linux-user/strace.c
+index 90027a1106..89e1f97c6e 100644
+--- a/linux-user/strace.c
++++ b/linux-user/strace.c
+@@ -11,6 +11,7 @@
+ #include <unistd.h>
+ #include <sched.h>
+ #include "qemu.h"
++#include "sys/sysmacros.h"
+ 
+ int do_strace=0;
+ 
+diff --git a/linux-user/syscall.c b/linux-user/syscall.c
+index f227097801..46fa61dad1 100644
+--- a/linux-user/syscall.c
++++ b/linux-user/syscall.c
+@@ -204,15 +204,6 @@ static type name (type1 arg1,type2 arg2,type3 arg3,type4 arg4,type5 arg5,	\
+ #define __NR__llseek __NR_lseek
+ #endif
+ 
+-#ifdef __NR_gettid
+-_syscall0(int, gettid)
+-#else
+-/* This is a replacement for the host gettid() and must return a host
+-   errno. */
+-static int gettid(void) {
+-    return -ENOSYS;
+-}
+-#endif
+ _syscall3(int, sys_getdents, uint, fd, struct linux_dirent *, dirp, uint, count);
+ #if defined(TARGET_NR_getdents64) && defined(__NR_getdents64)
+ _syscall3(int, sys_getdents64, uint, fd, struct linux_dirent64 *, dirp, uint, count);
+diff --git a/osdep.h b/osdep.h
+index 432b91ea72..b447e9d356 100644
+--- a/osdep.h
++++ b/osdep.h
+@@ -66,7 +66,6 @@
+ #ifndef always_inline
+ #if !((__GNUC__ < 3) || defined(__APPLE__))
+ #ifdef __OPTIMIZE__
+-#define inline __attribute__ (( always_inline )) __inline__
+ #endif
+ #endif
+ #else
+diff --git a/user-exec.c b/user-exec.c
+index abf688546e..a364d78bc3 100644
+--- a/user-exec.c
++++ b/user-exec.c
+@@ -53,7 +53,7 @@ static void exception_action(CPUState *env1)
+ void cpu_resume_from_signal(CPUState *env1, void *puc)
+ {
+ #ifdef __linux__
+-    struct ucontext *uc = puc;
++    struct ucontext_t *uc = puc;
+ #elif defined(__OpenBSD__)
+     struct sigcontext *uc = puc;
+ #endif
+@@ -170,7 +170,7 @@ int cpu_signal_handler(int host_signum, void *pinfo,
+ #elif defined(__OpenBSD__)
+     struct sigcontext *uc = puc;
+ #else
+-    struct ucontext *uc = puc;
++    struct ucontext_t *uc = puc;
+ #endif
+     unsigned long pc;
+     int trapno;
+@@ -225,7 +225,7 @@ int cpu_signal_handler(int host_signum, void *pinfo,
+ #elif defined(__OpenBSD__)
+     struct sigcontext *uc = puc;
+ #else
+-    struct ucontext *uc = puc;
++    struct ucontext_t *uc = puc;
+ #endif
+ 
+     pc = PC_sig(uc);
+@@ -287,7 +287,7 @@ int cpu_signal_handler(int host_signum, void *pinfo,
+ 
+ #ifdef __APPLE__
+ #include <sys/ucontext.h>
+-typedef struct ucontext SIGCONTEXT;
++typedef struct ucontext_t SIGCONTEXT;
+ /* All Registers access - only for local access */
+ #define REG_sig(reg_name, context)              \
+     ((context)->uc_mcontext->ss.reg_name)
+@@ -330,7 +330,7 @@ int cpu_signal_handler(int host_signum, void *pinfo,
+ #if defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
+     ucontext_t *uc = puc;
+ #else
+-    struct ucontext *uc = puc;
++    struct ucontext_t *uc = puc;
+ #endif
+     unsigned long pc;
+     int is_write;
+@@ -357,7 +357,7 @@ int cpu_signal_handler(int host_signum, void *pinfo,
+                            void *puc)
+ {
+     siginfo_t *info = pinfo;
+-    struct ucontext *uc = puc;
++    struct ucontext_t *uc = puc;
+     uint32_t *pc = uc->uc_mcontext.sc_pc;
+     uint32_t insn = *pc;
+     int is_write = 0;
+@@ -444,7 +444,7 @@ int cpu_signal_handler(int host_signum, void *pinfo,
+                        void *puc)
+ {
+     siginfo_t *info = pinfo;
+-    struct ucontext *uc = puc;
++    struct ucontext_t *uc = puc;
+     unsigned long pc;
+     int is_write;
+ 
+@@ -466,7 +466,7 @@ int cpu_signal_handler(int host_signum, void *pinfo,
+                        void *puc)
+ {
+     siginfo_t *info = pinfo;
+-    struct ucontext *uc = puc;
++    struct ucontext_t *uc = puc;
+     unsigned long pc;
+     int is_write;
+ 
+@@ -488,7 +488,7 @@ int cpu_signal_handler(int host_signum, void *pinfo,
+ int cpu_signal_handler(int host_signum, void *pinfo, void *puc)
+ {
+     siginfo_t *info = pinfo;
+-    struct ucontext *uc = puc;
++    struct ucontext_t *uc = puc;
+     unsigned long ip;
+     int is_write = 0;
+ 
+@@ -519,7 +519,7 @@ int cpu_signal_handler(int host_signum, void *pinfo,
+                        void *puc)
+ {
+     siginfo_t *info = pinfo;
+-    struct ucontext *uc = puc;
++    struct ucontext_t *uc = puc;
+     unsigned long pc;
+     uint16_t *pinsn;
+     int is_write = 0;
+@@ -572,7 +572,7 @@ int cpu_signal_handler(int host_signum, void *pinfo,
+                        void *puc)
+ {
+     siginfo_t *info = pinfo;
+-    struct ucontext *uc = puc;
++    struct ucontext_t *uc = puc;
+     greg_t pc = uc->uc_mcontext.pc;
+     int is_write;
+ 
+@@ -588,7 +588,7 @@ int cpu_signal_handler(int host_signum, void *pinfo,
+                        void *puc)
+ {
+     struct siginfo *info = pinfo;
+-    struct ucontext *uc = puc;
++    struct ucontext_t *uc = puc;
+     unsigned long pc = uc->uc_mcontext.sc_iaoq[0];
+     uint32_t insn = *(uint32_t *)pc;
+     int is_write = 0;

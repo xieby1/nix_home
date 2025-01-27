@@ -1,0 +1,42 @@
+digraph {
+
+node[
+    shape=box,
+    style="filled, solid",
+    color=black,
+    fillcolor=white,
+]
+
+subgraph cluster_x86 {
+    label="x86";
+    i386 -> i486 -> i586 -> i686;
+}
+i686 -> x86_64 [style=dashed;];
+
+subgraph cluster_arm32
+{
+    label="arm32";
+    arm -> armv5tel -> armv6l -> armv6m -> armv7l;
+    armv7l -> {armv7a; armv7r; armv7m;} -> {armv8a; armv8r; armv8m;};
+    {armv8r; armv8m;} -> armv8a;
+    {rank=same; armv8a; armv8r; armv8m;}
+}
+aarch64 -> armv8a -> aarch64 [style=dashed;];
+aarch64 -> aarch64_be -> aarch64;
+
+powerpc -> powerpc64;
+powerpcle -> powerpc -> powerpcle;
+powerpc64le -> powerpc64 -> powerpc64le;
+
+mips -> mips64;
+mips -> mipsel -> mips;
+mips64 -> mips64el -> mips64;
+
+riscv32 -> riscv64;
+
+sparc -> sparc64;
+
+wasm32 -> wasm64;
+
+label="x86 → x86_64 not true in some cases. Like in WSL mode\naarch64 ↔ arm32 not always true! Some arm64 cpus don’t support arm32 mod";
+}

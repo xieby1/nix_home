@@ -1,0 +1,508 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>交叉编译和安装跨平台程序 - Xieby1&#x27;s Nix/NixOS Config</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../../favicon.svg">
+        <link rel="shortcut icon" href="../../favicon.png">
+        <link rel="stylesheet" href="../../css/variables.css">
+        <link rel="stylesheet" href="../../css/general.css">
+        <link rel="stylesheet" href="../../css/chrome.css">
+        <link rel="stylesheet" href="../../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../../highlight.css">
+        <link rel="stylesheet" href="../../tomorrow-night.css">
+        <link rel="stylesheet" href="../../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><li class="part-title">🏠主页</li><li class="chapter-item expanded "><a href="../../index.html"><strong aria-hidden="true">1.</strong> 📔README.md</a></li><li class="chapter-item expanded affix "><li class="part-title">🌏全局配置</li><li class="chapter-item expanded "><a href="../../config.nix.html"><strong aria-hidden="true">2.</strong> config.nix</a></li><li class="chapter-item expanded "><a href="../../nix/nix.conf.html"><strong aria-hidden="true">3.</strong> TODO: nix/nix.conf</a></li><li class="chapter-item expanded "><a href="../../opt.nix.html"><strong aria-hidden="true">4.</strong> opt.nix</a></li><li class="chapter-item expanded affix "><li class="part-title">🖥️系统配置(需sudo,用于NixOS)</li><li class="chapter-item expanded "><a href="../../system.nix.html"><strong aria-hidden="true">5.</strong> system.nix</a></li><li class="chapter-item expanded "><a href="../../sys/index.html"><strong aria-hidden="true">6.</strong> sys/</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../sys/cli.nix.html"><strong aria-hidden="true">6.1.</strong> cli.nix</a></li><li class="chapter-item expanded "><a href="../../sys/gui.nix.html"><strong aria-hidden="true">6.2.</strong> gui.nix.md</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.3.</strong> modules/</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../sys/modules/cachix.nix.html"><strong aria-hidden="true">6.3.1.</strong> cachix.nix.md</a></li></ol></li><li class="chapter-item expanded "><a href="../../sys/wayland.html"><strong aria-hidden="true">6.4.</strong> Currently, Not Wayland, But X11</a></li></ol></li><li class="chapter-item expanded "><li class="part-title">😺用户配置(无需sudo,用于Nix/NixOS)</li><li class="chapter-item expanded "><a href="../../home.nix.html"><strong aria-hidden="true">7.</strong> home.nix</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">8.</strong> usr/</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../usr/cli-extra.nix.html"><strong aria-hidden="true">8.1.</strong> cli-extra.nix: Extra CLI configs (added to minial cli.nix)</a></li><li class="chapter-item expanded "><a href="../../usr/cli.nix.html"><strong aria-hidden="true">8.2.</strong> cli.nix.md</a></li><li class="chapter-item expanded "><a href="../../usr/cli/index.html"><strong aria-hidden="true">8.3.</strong> cli/</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../usr/cli/clash.nix.html"><strong aria-hidden="true">8.3.1.</strong> clash.nix.md</a></li><li class="chapter-item expanded "><a href="../../usr/cli/clashctl.nix.html"><strong aria-hidden="true">8.3.2.</strong> clashctl.nix.md</a></li><li class="chapter-item expanded "><a href="../../usr/cli/kaleido.nix.html"><strong aria-hidden="true">8.3.3.</strong> kaleido.nix.md</a></li><li class="chapter-item expanded "><a href="../../usr/cli/ld.html"><strong aria-hidden="true">8.3.4.</strong> binutils's ld and gcc's ld collsion</a></li><li class="chapter-item expanded "><a href="../../usr/cli/node.html"><strong aria-hidden="true">8.3.5.</strong> Nodejs packages (npm) in NixOS</a></li><li class="chapter-item expanded "><a href="../../usr/cli/pandora-chatgpt.html"><strong aria-hidden="true">8.3.6.</strong> 打包python（pip）包，以pandora-chatgpt为例</a></li><li class="chapter-item expanded "><a href="../../usr/cli/pandora-chatgpt.nix.html"><strong aria-hidden="true">8.3.7.</strong> pandora-chatgpt.nix.md</a></li><li class="chapter-item expanded "><a href="../../usr/cli/python.html"><strong aria-hidden="true">8.3.8.</strong> Python in Nix/NixOS</a></li><li class="chapter-item expanded "><a href="../../usr/cli/searxng.nix.html"><strong aria-hidden="true">8.3.9.</strong> searxng.nix.md</a></li><li class="chapter-item expanded "><a href="../../usr/cli/static_qemu.html"><strong aria-hidden="true">8.3.10.</strong> 静态链接，以qemu为例</a></li><li class="chapter-item expanded "><a href="../../usr/cli/tailscale.html"><strong aria-hidden="true">8.3.11.</strong> Tailscale/Headscale</a></li><li class="chapter-item expanded "><a href="../../usr/cli/tailscale.nix.html"><strong aria-hidden="true">8.3.12.</strong> tailscale.nix.md</a></li><li class="chapter-item expanded "><a href="../../usr/cli/tmux.nix.html"><strong aria-hidden="true">8.3.13.</strong> tmux</a></li><li class="chapter-item expanded "><a href="../../usr/cli/vim/index.html"><strong aria-hidden="true">8.3.14.</strong> 📑neovim</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../usr/cli/vim/DrawIt.nix.html"><strong aria-hidden="true">8.3.14.1.</strong> DrawIt: ascii art drawing</a></li><li class="chapter-item expanded "><a href="../../usr/cli/vim/codecompanion-nvim.nix.html"><strong aria-hidden="true">8.3.14.2.</strong> codecompanion-nvim.nix.md</a></li><li class="chapter-item expanded "><a href="../../usr/cli/vim/color-scheme.nix.html"><strong aria-hidden="true">8.3.14.3.</strong> 🎨My nvim color scheme</a></li><li class="chapter-item expanded "><a href="../../usr/cli/vim/conform-nvim.nix.html"><strong aria-hidden="true">8.3.14.4.</strong> conform-nvim: formatter</a></li><li class="chapter-item expanded "><a href="../../usr/cli/vim/default.nix.html"><strong aria-hidden="true">8.3.14.5.</strong> default.nix.md</a></li><li class="chapter-item expanded "><a href="../../usr/cli/vim/git-wip.nix.html"><strong aria-hidden="true">8.3.14.6.</strong> git-wip: auto wip branch</a></li><li class="chapter-item expanded "><a href="../../usr/cli/vim/gitsigns-nvim.nix.html"><strong aria-hidden="true">8.3.14.7.</strong> gitsigns-nvim: git support</a></li><li class="chapter-item expanded "><a href="../../usr/cli/vim/hbac-nvim.nix.html"><strong aria-hidden="true">8.3.14.8.</strong> hbac-nvim: auto close buffer</a></li><li class="chapter-item expanded "><a href="../../usr/cli/vim/leap-nvim.nix.html"><strong aria-hidden="true">8.3.14.9.</strong> leap-nvim.nix.md</a></li><li class="chapter-item expanded "><a href="../../usr/cli/vim/mini-nvim.nix.html"><strong aria-hidden="true">8.3.14.10.</strong> mini-nvim: a nvim distro</a></li><li class="chapter-item expanded "><a href="../../usr/cli/vim/nvim-cmp.nix.html"><strong aria-hidden="true">8.3.14.11.</strong> nvim-cmp: completion</a></li><li class="chapter-item expanded "><a href="../../usr/cli/vim/nvim-config-local.nix.html"><strong aria-hidden="true">8.3.14.12.</strong> nvim-config-local: load local vim config</a></li><li class="chapter-item expanded "><a href="../../usr/cli/vim/nvim-lspconfig.nix.html"><strong aria-hidden="true">8.3.14.13.</strong> nvim-lspconfig</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">8.3.14.14.</strong> nvim-metals/</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../usr/cli/vim/nvim-metals/default.nix.html"><strong aria-hidden="true">8.3.14.14.1.</strong> nvim-metals: Scala LSP</a></li><li class="chapter-item expanded "><a href="../../usr/cli/vim/nvim-metals/jre_with_proxy.nix.html"><strong aria-hidden="true">8.3.14.14.2.</strong> JRE with Proxy</a></li></ol></li><li class="chapter-item expanded "><a href="../../usr/cli/vim/nvim-treesitter.nix.html"><strong aria-hidden="true">8.3.14.15.</strong> nvim-treesitter: languages parsing</a></li><li class="chapter-item expanded "><a href="../../usr/cli/vim/smartyank-nvim.nix.html"><strong aria-hidden="true">8.3.14.16.</strong> smartyank-nvim: smart yank to clipboard</a></li><li class="chapter-item expanded "><a href="../../usr/cli/vim/telescope-nvim.nix.html"><strong aria-hidden="true">8.3.14.17.</strong> telescope-nvim</a></li><li class="chapter-item expanded "><a href="../../usr/cli/vim/vim-easy-align.nix.html"><strong aria-hidden="true">8.3.14.18.</strong> vim-easy-align: A simple, easy-to-use Vim alignment plugin.</a></li><li class="chapter-item expanded "><a href="../../usr/cli/vim/vim-floaterm.nix.html"><strong aria-hidden="true">8.3.14.19.</strong> vim-floaterm: floating terminal</a></li><li class="chapter-item expanded "><a href="../../usr/cli/vim/vim-hexokinase.nix.html"><strong aria-hidden="true">8.3.14.20.</strong> vim-hexokinase: display colors</a></li><li class="chapter-item expanded "><a href="../../usr/cli/vim/vim-mark.nix.html"><strong aria-hidden="true">8.3.14.21.</strong> vim-mark: multi-color highlight</a></li><li class="chapter-item expanded "><a href="../../usr/cli/vim/vim-markdown.nix.html"><strong aria-hidden="true">8.3.14.22.</strong> vim-markdown: md support</a></li><li class="chapter-item expanded "><a href="../../usr/cli/vim/vista-vim.nix.html"><strong aria-hidden="true">8.3.14.23.</strong> vista-vim: lsp symbols</a></li><li class="chapter-item expanded "><a href="../../usr/cli/vim/winshift-nvim.nix.html"><strong aria-hidden="true">8.3.14.24.</strong> winshift-nvim: rearrange windows</a></li></ol></li></ol></li><li class="chapter-item expanded "><a href="../../usr/gui.nix.html"><strong aria-hidden="true">8.4.</strong> gui.nix.md</a></li><li class="chapter-item expanded "><a href="../../usr/gui/index.html"><strong aria-hidden="true">8.5.</strong> gui/</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../usr/gui/feishu.html"><strong aria-hidden="true">8.5.1.</strong> 安装deb包，以飞书为例</a></li><li class="chapter-item expanded "><a href="../../usr/gui/firefox.nix.html"><strong aria-hidden="true">8.5.2.</strong> firefox.nix.md</a></li><li class="chapter-item expanded "><a href="../../usr/gui/gnome.html"><strong aria-hidden="true">8.5.3.</strong> Gnome in NixOS</a></li><li class="chapter-item expanded "><a href="../../usr/gui/gnome.nix.html"><strong aria-hidden="true">8.5.4.</strong> gnome.nix.md</a></li><li class="chapter-item expanded "><a href="../../usr/gui/kdeconnect.nix.html"><strong aria-hidden="true">8.5.5.</strong> KDE Connect</a></li><li class="chapter-item expanded "><a href="../../usr/gui/mime.nix.html"><strong aria-hidden="true">8.5.6.</strong> https://nixos.org/manual/nixos/stable/#sec-writing-modules</a></li><li class="chapter-item expanded "><a href="../../usr/gui/rofi.nix.html"><strong aria-hidden="true">8.5.7.</strong> rofi.nix.md</a></li><li class="chapter-item expanded "><a href="../../usr/gui/rustdesk.nix.html"><strong aria-hidden="true">8.5.8.</strong> rustdesk, the remote desktop app</a></li><li class="chapter-item expanded "><a href="../../usr/gui/singleton_web_apps.nix.html"><strong aria-hidden="true">8.5.9.</strong> singleton_web_apps.nix.md</a></li><li class="chapter-item expanded "><a href="../../usr/gui/terminal.nix.html"><strong aria-hidden="true">8.5.10.</strong> terminal.nix.md</a></li><li class="chapter-item expanded "><a href="../../usr/gui/typora.html"><strong aria-hidden="true">8.5.11.</strong> Typora</a></li><li class="chapter-item expanded "><a href="../../usr/gui/waydroid.html"><strong aria-hidden="true">8.5.12.</strong> Wayland</a></li><li class="chapter-item expanded "><a href="../../usr/gui/weixin.nix.html"><strong aria-hidden="true">8.5.13.</strong> weixin.nix.md</a></li><li class="chapter-item expanded "><a href="../../usr/gui/wrapWine.nix.html"><strong aria-hidden="true">8.5.14.</strong> based on https://github.com/lucasew/nixcfg/blob/49d44c1a655f1c20d7354ecea942c78704067d50/pkgs/wrapWine.nix</a></li><li class="chapter-item expanded "><a href="../../usr/gui/xdot.nix.html"><strong aria-hidden="true">8.5.15.</strong> xdot, the dot (graphviz) viewer</a></li><li class="chapter-item expanded "><a href="../../usr/gui/xelfviewer.nix.html"><strong aria-hidden="true">8.5.16.</strong> xelfviewer.nix.md</a></li></ol></li><li class="chapter-item expanded "><div><strong aria-hidden="true">8.6.</strong> modules/</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../usr/modules/cachix.nix.html"><strong aria-hidden="true">8.6.1.</strong> cachix.nix.md</a></li></ol></li></ol></li><li class="chapter-item expanded "><li class="part-title">🤖安卓配置(无需sudo,复用"用户配置")</li><li class="chapter-item expanded "><a href="../../nix-on-droid.nix.html"><strong aria-hidden="true">9.</strong> nix-on-droid.nix</a></li><li class="chapter-item expanded affix "><li class="part-title">🔩通用模块</li><li class="chapter-item expanded "><div><strong aria-hidden="true">10.</strong> modules/</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../modules/cachix.nix.html"><strong aria-hidden="true">10.1.</strong> cachix.nix.md</a></li></ol></li><li class="chapter-item expanded "><li class="part-title">📝文档和心得体会</li><li class="chapter-item expanded "><div><strong aria-hidden="true">11.</strong> docs/</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../docs/explanation/index.html"><strong aria-hidden="true">11.1.</strong> explanation/</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../docs/explanation/modules.html"><strong aria-hidden="true">11.1.1.</strong> Module</a></li><li class="chapter-item expanded "><a href="../../docs/explanation/nixpkgs.html"><strong aria-hidden="true">11.1.2.</strong> Nixpkgs</a></li></ol></li><li class="chapter-item expanded "><a href="../../docs/howto/index.html"><strong aria-hidden="true">11.2.</strong> howto/</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../docs/howto/32bit.html"><strong aria-hidden="true">11.2.1.</strong> 打包/编译32位程序</a></li><li class="chapter-item expanded "><a href="../../docs/howto/auto_push_to_cachix/index.html"><strong aria-hidden="true">11.2.2.</strong> Auto Push Packages to Cachix</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../docs/howto/auto_push_to_cachix/cachix-package.nix.html"><strong aria-hidden="true">11.2.2.1.</strong> cachixPackage</a></li><li class="chapter-item expanded "><a href="../../docs/howto/auto_push_to_cachix/test.nix.html"><strong aria-hidden="true">11.2.2.2.</strong> Test for cachixPackage</a></li></ol></li><li class="chapter-item expanded "><a href="../../docs/howto/backup_binary_cache.html"><strong aria-hidden="true">11.2.3.</strong> 备份binary cache</a></li><li class="chapter-item expanded "><a href="../../docs/howto/cross.html" class="active"><strong aria-hidden="true">11.2.4.</strong> 交叉编译和安装跨平台程序</a></li><li class="chapter-item expanded "><a href="../../docs/howto/install_nixos.html"><strong aria-hidden="true">11.2.5.</strong> 安装NixOS</a></li></ol></li><li class="chapter-item expanded "><a href="../../docs/slides/index.html"><strong aria-hidden="true">11.3.</strong> slides/</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../docs/slides/2023.nix-env.html"><strong aria-hidden="true">11.3.1.</strong> Nix让你的团队成员不再受环境问题困扰</a></li></ol></li></ol></li><li class="chapter-item expanded "><li class="part-title">📃Nix脚本（nix-shell和打包）</li><li class="chapter-item expanded "><div><strong aria-hidden="true">12.</strong> scripts/</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../scripts/fhs-shell/index.html"><strong aria-hidden="true">12.1.</strong> fhs-shell/</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../scripts/fhs-shell/dynamorio.nix.html"><strong aria-hidden="true">12.1.1.</strong> dynamorio.nix.md</a></li><li class="chapter-item expanded "><a href="../../scripts/fhs-shell/hello.nix.html"><strong aria-hidden="true">12.1.2.</strong> hello.nix.md</a></li><li class="chapter-item expanded "><a href="../../scripts/fhs-shell/pin.nix.html"><strong aria-hidden="true">12.1.3.</strong> pin.nix.md</a></li><li class="chapter-item expanded "><a href="../../scripts/fhs-shell/spec.nix.html"><strong aria-hidden="true">12.1.4.</strong> spec.nix.md</a></li><li class="chapter-item expanded "><a href="../../scripts/fhs-shell/x11.nix.html"><strong aria-hidden="true">12.1.5.</strong> x11.nix.md</a></li><li class="chapter-item expanded "><a href="../../scripts/fhs-shell/xilinx.nix.html"><strong aria-hidden="true">12.1.6.</strong> xilinx.nix.md</a></li></ol></li><li class="chapter-item expanded "><a href="../../scripts/pkgs/index.html"><strong aria-hidden="true">12.2.</strong> pkgs/</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../scripts/pkgs/7z.nix.html"><strong aria-hidden="true">12.2.1.</strong> TODO: 7z need dynamical link 7z.so</a></li><li class="chapter-item expanded "><a href="../../scripts/pkgs/android.html"><strong aria-hidden="true">12.2.2.</strong> 在NixOS上使用Android程序</a></li><li class="chapter-item expanded "><a href="../../scripts/pkgs/android.nix.html"><strong aria-hidden="true">12.2.3.</strong> android.nix.md</a></li><li class="chapter-item expanded "><a href="../../scripts/pkgs/appimage_runtime.nix.html"><strong aria-hidden="true">12.2.4.</strong> appimage_runtime.nix.md</a></li><li class="chapter-item expanded "><a href="../../scripts/pkgs/coremarks.nix.html"><strong aria-hidden="true">12.2.5.</strong> coremarks.nix.md</a></li><li class="chapter-item expanded "><a href="../../scripts/pkgs/cross_mips.nix.html"><strong aria-hidden="true">12.2.6.</strong> cross_mips.nix.md</a></li><li class="chapter-item expanded "><a href="../../scripts/pkgs/cross_static_hello.nix.html"><strong aria-hidden="true">12.2.7.</strong> cross_static_hello.nix.md</a></li><li class="chapter-item expanded "><a href="../../scripts/pkgs/fhs_helloworld.nix.html"><strong aria-hidden="true">12.2.8.</strong> fhs_helloworld.nix.md</a></li><li class="chapter-item expanded "><a href="../../scripts/pkgs/fhs_spec2000_perl.nix.html"><strong aria-hidden="true">12.2.9.</strong> fhs_spec2000_perl.nix.md</a></li><li class="chapter-item expanded "><a href="../../scripts/pkgs/nix-binary-tarballs-new.nix.html"><strong aria-hidden="true">12.2.10.</strong> nix-binary-tarballs-new.nix.md</a></li><li class="chapter-item expanded "><a href="../../scripts/pkgs/nix-binary-tarballs.nix.html"><strong aria-hidden="true">12.2.11.</strong> nix-binary-tarballs.nix.md</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">12.2.12.</strong> nix-docker-isa/</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../scripts/pkgs/nix-docker-isa/default.nix.html"><strong aria-hidden="true">12.2.12.1.</strong> 🐳Nix Docker🐋 for Multiple ISAs</a></li><li class="chapter-item expanded "><a href="../../scripts/pkgs/nix-docker-isa/dockers.nix.html"><strong aria-hidden="true">12.2.12.2.</strong> dockers.nix.md</a></li></ol></li><li class="chapter-item expanded "><a href="../../scripts/pkgs/nvchad.nix.html"><strong aria-hidden="true">12.2.13.</strong> nvchad.nix.md</a></li><li class="chapter-item expanded "><a href="../../scripts/pkgs/qemu-sys-static.nix.html"><strong aria-hidden="true">12.2.14.</strong> qemu-sys-static.nix.md</a></li><li class="chapter-item expanded "><a href="../../scripts/pkgs/qemu-sys_riscv64_static.nix.html"><strong aria-hidden="true">12.2.15.</strong> qemu-sys_riscv64_static.nix.md</a></li><li class="chapter-item expanded "><a href="../../scripts/pkgs/qemu_riscv64_static.nix.html"><strong aria-hidden="true">12.2.16.</strong> qemu_riscv64_static.nix.md</a></li><li class="chapter-item expanded "><a href="../../scripts/pkgs/qemu_static.nix.html"><strong aria-hidden="true">12.2.17.</strong> qemu_static.nix.md</a></li><li class="chapter-item expanded "><a href="../../scripts/pkgs/qemu_tests_tcg.nix.html"><strong aria-hidden="true">12.2.18.</strong> qemu_tests_tcg.nix.md</a></li><li class="chapter-item expanded "><a href="../../scripts/pkgs/qemus.nix.html"><strong aria-hidden="true">12.2.19.</strong> build by version</a></li><li class="chapter-item expanded "><a href="../../scripts/pkgs/shellinabox.nix.html"><strong aria-hidden="true">12.2.20.</strong> https://github.com/NixOS/nixpkgs/issues/185773</a></li></ol></li><li class="chapter-item expanded "><a href="../../scripts/shell/index.html"><strong aria-hidden="true">12.3.</strong> shell/</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../../scripts/shell/ccache.nix.html"><strong aria-hidden="true">12.3.1.</strong> ccache.nix.md</a></li><li class="chapter-item expanded "><a href="../../scripts/shell/chipyard.nix.html"><strong aria-hidden="true">12.3.2.</strong> chipyard.nix.md</a></li><li class="chapter-item expanded "><a href="../../scripts/shell/cross_mips.nix.html"><strong aria-hidden="true">12.3.3.</strong> cross_mips.nix.md</a></li><li class="chapter-item expanded "><a href="../../scripts/shell/cross_platform.nix.html"><strong aria-hidden="true">12.3.4.</strong> cross_platform.nix.md</a></li><li class="chapter-item expanded "><a href="../../scripts/shell/devshell_hello.nix.html"><strong aria-hidden="true">12.3.5.</strong> devshell_hello.nix.md</a></li><li class="chapter-item expanded "><a href="../../scripts/shell/gcc.nix.html"><strong aria-hidden="true">12.3.6.</strong> gcc.nix.md</a></li><li class="chapter-item expanded "><a href="../../scripts/shell/hello.nix.html"><strong aria-hidden="true">12.3.7.</strong> hello.nix.md</a></li><li class="chapter-item expanded "><a href="../../scripts/shell/pygame.nix.html"><strong aria-hidden="true">12.3.8.</strong> pygame.nix.md</a></li><li class="chapter-item expanded "><a href="../../scripts/shell/python_fhs_venv.nix.html"><strong aria-hidden="true">12.3.9.</strong> https://nixos.wiki/wiki/Python</a></li><li class="chapter-item expanded "><a href="../../scripts/shell/python_mach.nix.html"><strong aria-hidden="true">12.3.10.</strong> python_mach.nix.md</a></li><li class="chapter-item expanded "><a href="../../scripts/shell/python_venv.nix.html"><strong aria-hidden="true">12.3.11.</strong> python_venv.nix.md</a></li><li class="chapter-item expanded "><a href="../../scripts/shell/qemu_plugins.nix.html"><strong aria-hidden="true">12.3.12.</strong> qemu_plugins.nix.md</a></li><li class="chapter-item expanded "><a href="../../scripts/shell/qemu_tests_tcg.nix.html"><strong aria-hidden="true">12.3.13.</strong> qemu_tests_tcg.nix.md</a></li><li class="chapter-item expanded "><a href="../../scripts/shell/riscv-tests.nix.html"><strong aria-hidden="true">12.3.14.</strong> riscv-tests.nix.md</a></li><li class="chapter-item expanded "><a href="../../scripts/shell/spike.nix.html"><strong aria-hidden="true">12.3.15.</strong> spike.nix.md</a></li><li class="chapter-item expanded "><a href="../../scripts/shell/texlive.nix.html"><strong aria-hidden="true">12.3.16.</strong> texlive.nix.md</a></li><li class="chapter-item expanded "><a href="../../scripts/shell/ucasproposal.nix.html"><strong aria-hidden="true">12.3.17.</strong> ucasproposal.nix.md</a></li><li class="chapter-item expanded "><a href="../../scripts/shell/v8.nix.html"><strong aria-hidden="true">12.3.18.</strong> v8.nix.md</a></li><li class="chapter-item expanded "><a href="../../scripts/shell/venv.nix.html"><strong aria-hidden="true">12.3.19.</strong> venv.nix.md</a></li><li class="chapter-item expanded "><a href="../../scripts/shell/wine6.nix.html"><strong aria-hidden="true">12.3.20.</strong> wine6.nix.md</a></li><li class="chapter-item expanded "><a href="../../scripts/shell/xiangshan.nix.html"><strong aria-hidden="true">12.3.21.</strong> xiangshan.nix.md</a></li></ol></li></ol></li><li class="chapter-item expanded "><li class="part-title">📌其他</li><li class="chapter-item expanded "><a href="../../shell.nix.html"><strong aria-hidden="true">13.</strong> shell.nix</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Xieby1&#x27;s Nix/NixOS Config</h1>
+
+                    <div class="right-buttons">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/xieby1/nix_config" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="交叉编译和安装跨平台程序"><a class="header" href="#交叉编译和安装跨平台程序">交叉编译和安装跨平台程序</a></h1>
+<p>nixpkgs原生支持x86和arm指令集。
+通过对nixpkgs配置可以轻松实现交叉编译，
+跨平台程序的安装等功能。</p>
+<h2 id="太长不看"><a class="header" href="#太长不看">太长不看</a></h2>
+<ul>
+<li>
+<p>x86_64上的aarch64交叉编译器</p>
+<p><code>(with import &lt;nixpkgs&gt; {crossSystem="aarch64-linux";}; stdenv.cc)</code></p>
+</li>
+<li>
+<p>aarch64的hello应用程序</p>
+<p><code>(with import &lt;nixpkgs&gt; {localSystem.system="aarch64-linux";crossSystem="aarch64-linux";}; hello)</code></p>
+</li>
+<li>
+<p>应用于nix-shell的例子</p>
+<p><a href="https://xieby1.github.io/scripts/index.html#shell_cross_platformnix">shell_cross_platform.nix</a></p>
+</li>
+</ul>
+<h2 id="目录"><a class="header" href="#目录">目录</a></h2>
+<!-- vim-markdown-toc GFM -->
+<ul>
+<li><a href="#%E7%AE%80%E4%BB%8B">简介</a></li>
+<li><a href="#localsystem%E5%92%8Ccrosssystem%E7%9A%84%E8%AF%AD%E6%B3%95"><code>localSystem</code>和<code>crossSystem</code>的语法</a>
+<ul>
+<li><a href="#cpu-vendor-kernel-abi">cpu-vendor-kernel-abi</a>
+<ul>
+<li><a href="#cpu">cpu</a>
+<ul>
+<li><a href="#cputypes">cpuTypes</a></li>
+</ul>
+</li>
+<li><a href="#vendor">vendor</a></li>
+<li><a href="#kernel">kernel</a></li>
+<li><a href="#abi">abi</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#localsystem%E5%92%8Ccrosssystem%E7%9A%84%E5%BA%94%E7%94%A8"><code>localSystem</code>和<code>crossSystem</code>的应用</a>
+<ul>
+<li><a href="#aarch64%E4%BA%A4%E5%8F%89%E5%B7%A5%E5%85%B7%E9%93%BE%E5%92%8C%E7%A8%8B%E5%BA%8F%E7%9A%84%E8%AF%A6%E7%BB%86%E4%BE%8B%E5%AD%90">aarch64交叉工具链和程序的详细例子</a></li>
+<li><a href="#mips%E4%BA%A4%E5%8F%89%E5%B7%A5%E5%85%B7%E9%93%BE%E7%9A%84%E4%BE%8B%E5%AD%90">mips交叉工具链的例子</a></li>
+</ul>
+</li>
+<li><a href="#%E5%BC%95%E7%94%A8">引用</a></li>
+</ul>
+<!-- vim-markdown-toc -->
+<h2 id="简介"><a class="header" href="#简介">简介</a></h2>
+<p>nixpkgs<sup class="footnote-reference"><a href="#version">1</a></sup>众多输入参数中，包含<code>localSystem</code>和<code>crossSystem</code><sup class="footnote-reference"><a href="#localSystem_crossSystem">2</a></sup>。</p>
+<ul>
+<li>
+<p><code>localSystem</code></p>
+<blockquote>
+<p>The system packages will be built on.</p>
+</blockquote>
+<p>本地系统，即工具链运行的平台。</p>
+</li>
+<li>
+<p><code>crossSystem</code></p>
+<blockquote>
+<p>The system packages will ultimately be run on.</p>
+</blockquote>
+<p>程序运行的平台。</p>
+</li>
+</ul>
+<p>通过<code>localSystem</code>和<code>crossSystem</code>不同值的组合，
+可以实现交叉编译、安装其他架构的原生应用。
+下面从<code>localSystem</code>和<code>crossSystem</code>的语法和应用两方面进行介绍。
+语法章节从nixpkgs源码的角度出发，介绍其语法的组成。
+应用章节围绕一个nix-shell脚本的实际例子，
+介绍x86_64平台的交叉编译和安装aarch64架构的原生应用的方法。</p>
+<h2 id="localsystem和crosssystem的语法"><a class="header" href="#localsystem和crosssystem的语法"><code>localSystem</code>和<code>crossSystem</code>的语法</a></h2>
+<p><code>localSystem</code>和<code>crossSystem</code>由4个维度去刻画一个系统：cpu, vendor, kernel, abi。
+<code>localSystem</code>和<code>crossSystem</code>的值为字符串或者<code>{system=字符串;}</code><sup class="footnote-reference"><a href="#localSystem_crossSystem_type">3</a></sup>。
+system字符串为可以包含前述4个维度的1~4个维度。
+nix在解析时会将省略的维度按以某些默认值补充完整。
+维度之间之间用<code>-</code>分割。
+因此system字符串形式上为<code>"cpu-vendor-kernel-abi"</code>。
+字符串不同数量的维度及其可用的值，
+按匹配优先级由高到低列举如下<sup class="footnote-reference"><a href="#skeleton">4</a></sup>，</p>
+<h3 id="cpu-vendor-kernel-abi"><a class="header" href="#cpu-vendor-kernel-abi">cpu-vendor-kernel-abi</a></h3>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: center">system字符串</th><th style="text-align: center">cpu</th><th style="text-align: center">vendor</th><th style="text-align: center">kernel</th><th style="text-align: center">abi</th></tr></thead><tbody>
+<tr><td style="text-align: center">"avr"</td><td style="text-align: center">avr</td><td style="text-align: center"></td><td style="text-align: center">none</td><td style="text-align: center">unknown</td></tr>
+<tr><td style="text-align: center">"{cpu}-cygwin"</td><td style="text-align: center">{cpu}</td><td style="text-align: center"></td><td style="text-align: center">windows</td><td style="text-align: center">cygnus</td></tr>
+<tr><td style="text-align: center">"{cpu}-windows"</td><td style="text-align: center">{cpu}</td><td style="text-align: center"></td><td style="text-align: center">windows</td><td style="text-align: center">msvc</td></tr>
+<tr><td style="text-align: center">"{cpu}-elf"</td><td style="text-align: center">{cpu}</td><td style="text-align: center">unknown</td><td style="text-align: center">none</td><td style="text-align: center">elf</td></tr>
+<tr><td style="text-align: center">"{cpu}-{kernel}"</td><td style="text-align: center">{cpu}</td><td style="text-align: center"></td><td style="text-align: center">{kernel}</td><td style="text-align: center"></td></tr>
+<tr><td style="text-align: center">"{cpu}-apple-{kernel}"</td><td style="text-align: center">{cpu}</td><td style="text-align: center">apple</td><td style="text-align: center">{kernel}</td><td style="text-align: center"></td></tr>
+<tr><td style="text-align: center">"{cpu}-linux-gnu"</td><td style="text-align: center">{cpu}</td><td style="text-align: center"></td><td style="text-align: center">linux</td><td style="text-align: center">gnu</td></tr>
+<tr><td style="text-align: center">"{cpu}-{vendor}-mingw32"</td><td style="text-align: center">{cpu}</td><td style="text-align: center">{vendor}</td><td style="text-align: center">windows</td><td style="text-align: center"></td></tr>
+<tr><td style="text-align: center">"{cpu}-{vendor}-wasi"</td><td style="text-align: center">{cpu}</td><td style="text-align: center">{vendor}</td><td style="text-align: center">wasi</td><td style="text-align: center"></td></tr>
+<tr><td style="text-align: center">"{cpu}-{vendor}-redox"</td><td style="text-align: center">{cpu}</td><td style="text-align: center">{vendor}</td><td style="text-align: center">redox</td><td style="text-align: center"></td></tr>
+<tr><td style="text-align: center">"{cpu}-{vendor}-mmixware"</td><td style="text-align: center">{cpu}</td><td style="text-align: center">{vendor}</td><td style="text-align: center">mmixware</td><td style="text-align: center"></td></tr>
+<tr><td style="text-align: center">"{cpu}-{vendor}-netbsd*"</td><td style="text-align: center">{cpu}</td><td style="text-align: center">{vendor}</td><td style="text-align: center">netbsd*</td><td style="text-align: center"></td></tr>
+<tr><td style="text-align: center">"{cpu}-{vendor}-eabi"</td><td style="text-align: center">{cpu}</td><td style="text-align: center">unknown</td><td style="text-align: center">{kernel}</td><td style="text-align: center">eabi</td></tr>
+<tr><td style="text-align: center">"{cpu}-{vendor}-eabihf"</td><td style="text-align: center">{cpu}</td><td style="text-align: center">unknown</td><td style="text-align: center">{kernel}</td><td style="text-align: center">eabihf</td></tr>
+<tr><td style="text-align: center">"{cpu}-{kernel}-elf"</td><td style="text-align: center">{cpu}</td><td style="text-align: center">unknown</td><td style="text-align: center">{kernel}</td><td style="text-align: center">elf</td></tr>
+<tr><td style="text-align: center">"{cpu}-*-{ghcjs}"</td><td style="text-align: center">{cpu}</td><td style="text-align: center">unknown</td><td style="text-align: center">ghcjs</td><td style="text-align: center"></td></tr>
+<tr><td style="text-align: center">"{cpu}-{vendor}-genode"</td><td style="text-align: center">{cpu}</td><td style="text-align: center">{vendor}</td><td style="text-align: center">genode</td><td style="text-align: center"></td></tr>
+<tr><td style="text-align: center">"{cpu}-{vendor}-{kernel}-{abi} "</td><td style="text-align: center">{cpu}</td><td style="text-align: center">{vendor}</td><td style="text-align: center">{kernel}</td><td style="text-align: center">{abi}</td></tr>
+</tbody></table>
+</div>
+<h4 id="cpu"><a class="header" href="#cpu">cpu</a></h4>
+<p>cpu字符串可取的值列举如下<sup class="footnote-reference"><a href="#cpuTypes">5</a></sup>,</p>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: center">cpu字符串</th><th style="text-align: center">bits</th><th style="text-align: center">significantByte</th><th style="text-align: center">family</th><th style="text-align: center">version</th><th style="text-align: center">arch</th></tr></thead><tbody>
+<tr><td style="text-align: center">"arm"</td><td style="text-align: center">32</td><td style="text-align: center">littleEndian</td><td style="text-align: center">"arm"</td><td style="text-align: center"></td><td style="text-align: center"></td></tr>
+<tr><td style="text-align: center">"armv5tel"</td><td style="text-align: center">32</td><td style="text-align: center">littleEndian</td><td style="text-align: center">"arm"</td><td style="text-align: center">"5"</td><td style="text-align: center">"armv5t"</td></tr>
+<tr><td style="text-align: center">"armv6m"</td><td style="text-align: center">32</td><td style="text-align: center">littleEndian</td><td style="text-align: center">"arm"</td><td style="text-align: center">"6"</td><td style="text-align: center">"armv6-m"</td></tr>
+<tr><td style="text-align: center">"armv6l"</td><td style="text-align: center">32</td><td style="text-align: center">littleEndian</td><td style="text-align: center">"arm"</td><td style="text-align: center">"6"</td><td style="text-align: center">"armv6"</td></tr>
+<tr><td style="text-align: center">"armv7a"</td><td style="text-align: center">32</td><td style="text-align: center">littleEndian</td><td style="text-align: center">"arm"</td><td style="text-align: center">"7"</td><td style="text-align: center">"armv7-a"</td></tr>
+<tr><td style="text-align: center">"armv7r"</td><td style="text-align: center">32</td><td style="text-align: center">littleEndian</td><td style="text-align: center">"arm"</td><td style="text-align: center">"7"</td><td style="text-align: center">"armv7-r"</td></tr>
+<tr><td style="text-align: center">"armv7m"</td><td style="text-align: center">32</td><td style="text-align: center">littleEndian</td><td style="text-align: center">"arm"</td><td style="text-align: center">"7"</td><td style="text-align: center">"armv7-m"</td></tr>
+<tr><td style="text-align: center">"armv7l"</td><td style="text-align: center">32</td><td style="text-align: center">littleEndian</td><td style="text-align: center">"arm"</td><td style="text-align: center">"7"</td><td style="text-align: center">"armv7"</td></tr>
+<tr><td style="text-align: center">"armv8a"</td><td style="text-align: center">32</td><td style="text-align: center">littleEndian</td><td style="text-align: center">"arm"</td><td style="text-align: center">"8"</td><td style="text-align: center">"armv8-a"</td></tr>
+<tr><td style="text-align: center">"armv8r"</td><td style="text-align: center">32</td><td style="text-align: center">littleEndian</td><td style="text-align: center">"arm"</td><td style="text-align: center">"8"</td><td style="text-align: center">"armv8-a"</td></tr>
+<tr><td style="text-align: center">"armv8m"</td><td style="text-align: center">32</td><td style="text-align: center">littleEndian</td><td style="text-align: center">"arm"</td><td style="text-align: center">"8"</td><td style="text-align: center">"armv8-m"</td></tr>
+<tr><td style="text-align: center">"aarch64"</td><td style="text-align: center">64</td><td style="text-align: center">littleEndian</td><td style="text-align: center">"arm"</td><td style="text-align: center">"8"</td><td style="text-align: center">"armv8-a"</td></tr>
+<tr><td style="text-align: center">"aarch64_be"</td><td style="text-align: center">64</td><td style="text-align: center">bigEndian</td><td style="text-align: center">"arm"</td><td style="text-align: center">"8"</td><td style="text-align: center">"armv8-a"</td></tr>
+<tr><td style="text-align: center">"i386"</td><td style="text-align: center">32</td><td style="text-align: center">littleEndian</td><td style="text-align: center">"x86"</td><td style="text-align: center"></td><td style="text-align: center">"i386"</td></tr>
+<tr><td style="text-align: center">"i486"</td><td style="text-align: center">32</td><td style="text-align: center">littleEndian</td><td style="text-align: center">"x86"</td><td style="text-align: center"></td><td style="text-align: center">"i486"</td></tr>
+<tr><td style="text-align: center">"i586"</td><td style="text-align: center">32</td><td style="text-align: center">littleEndian</td><td style="text-align: center">"x86"</td><td style="text-align: center"></td><td style="text-align: center">"i586"</td></tr>
+<tr><td style="text-align: center">"i686"</td><td style="text-align: center">32</td><td style="text-align: center">littleEndian</td><td style="text-align: center">"x86"</td><td style="text-align: center"></td><td style="text-align: center">"i686"</td></tr>
+<tr><td style="text-align: center">"x86_64"</td><td style="text-align: center">64</td><td style="text-align: center">littleEndian</td><td style="text-align: center">"x86"</td><td style="text-align: center"></td><td style="text-align: center">"x86-64"</td></tr>
+<tr><td style="text-align: center">"mips"</td><td style="text-align: center">32</td><td style="text-align: center">bigEndian</td><td style="text-align: center">"mips"</td><td style="text-align: center"></td><td style="text-align: center"></td></tr>
+<tr><td style="text-align: center">"mipsel"</td><td style="text-align: center">32</td><td style="text-align: center">littleEndian</td><td style="text-align: center">"mips"</td><td style="text-align: center"></td><td style="text-align: center"></td></tr>
+<tr><td style="text-align: center">"mips64"</td><td style="text-align: center">64</td><td style="text-align: center">bigEndian</td><td style="text-align: center">"mips"</td><td style="text-align: center"></td><td style="text-align: center"></td></tr>
+<tr><td style="text-align: center">"mips64el"</td><td style="text-align: center">64</td><td style="text-align: center">littleEndian</td><td style="text-align: center">"mips"</td><td style="text-align: center"></td><td style="text-align: center"></td></tr>
+<tr><td style="text-align: center">"mmix"</td><td style="text-align: center">64</td><td style="text-align: center">bigEndian</td><td style="text-align: center">"mmix"</td><td style="text-align: center"></td><td style="text-align: center"></td></tr>
+<tr><td style="text-align: center">"m68k"</td><td style="text-align: center">32</td><td style="text-align: center">bigEndian</td><td style="text-align: center">"m68k"</td><td style="text-align: center"></td><td style="text-align: center"></td></tr>
+<tr><td style="text-align: center">"powerpc"</td><td style="text-align: center">32</td><td style="text-align: center">bigEndian</td><td style="text-align: center">"power"</td><td style="text-align: center"></td><td style="text-align: center"></td></tr>
+<tr><td style="text-align: center">"powerpc64"</td><td style="text-align: center">64</td><td style="text-align: center">bigEndian</td><td style="text-align: center">"power"</td><td style="text-align: center"></td><td style="text-align: center"></td></tr>
+<tr><td style="text-align: center">"powerpc64le"</td><td style="text-align: center">64</td><td style="text-align: center">littleEndian</td><td style="text-align: center">"power"</td><td style="text-align: center"></td><td style="text-align: center"></td></tr>
+<tr><td style="text-align: center">"powerpcle"</td><td style="text-align: center">32</td><td style="text-align: center">littleEndian</td><td style="text-align: center">"power"</td><td style="text-align: center"></td><td style="text-align: center"></td></tr>
+<tr><td style="text-align: center">"riscv32"</td><td style="text-align: center">32</td><td style="text-align: center">littleEndian</td><td style="text-align: center">"riscv"</td><td style="text-align: center"></td><td style="text-align: center"></td></tr>
+<tr><td style="text-align: center">"riscv64"</td><td style="text-align: center">64</td><td style="text-align: center">littleEndian</td><td style="text-align: center">"riscv"</td><td style="text-align: center"></td><td style="text-align: center"></td></tr>
+<tr><td style="text-align: center">"s390"</td><td style="text-align: center">32</td><td style="text-align: center">bigEndian</td><td style="text-align: center">"s390"</td><td style="text-align: center"></td><td style="text-align: center"></td></tr>
+<tr><td style="text-align: center">"s390x"</td><td style="text-align: center">64</td><td style="text-align: center">bigEndian</td><td style="text-align: center">"s390"</td><td style="text-align: center"></td><td style="text-align: center"></td></tr>
+<tr><td style="text-align: center">"sparc"</td><td style="text-align: center">32</td><td style="text-align: center">bigEndian</td><td style="text-align: center">"sparc"</td><td style="text-align: center"></td><td style="text-align: center"></td></tr>
+<tr><td style="text-align: center">"sparc64"</td><td style="text-align: center">64</td><td style="text-align: center">bigEndian</td><td style="text-align: center">"sparc"</td><td style="text-align: center"></td><td style="text-align: center"></td></tr>
+<tr><td style="text-align: center">"wasm32"</td><td style="text-align: center">32</td><td style="text-align: center">littleEndian</td><td style="text-align: center">"wasm"</td><td style="text-align: center"></td><td style="text-align: center"></td></tr>
+<tr><td style="text-align: center">"wasm64"</td><td style="text-align: center">64</td><td style="text-align: center">littleEndian</td><td style="text-align: center">"wasm"</td><td style="text-align: center"></td><td style="text-align: center"></td></tr>
+<tr><td style="text-align: center">"alpha"</td><td style="text-align: center">64</td><td style="text-align: center">littleEndian</td><td style="text-align: center">"alpha"</td><td style="text-align: center"></td><td style="text-align: center"></td></tr>
+<tr><td style="text-align: center">"msp430"</td><td style="text-align: center">16</td><td style="text-align: center">littleEndian</td><td style="text-align: center">"msp430"</td><td style="text-align: center"></td><td style="text-align: center"></td></tr>
+<tr><td style="text-align: center">"avr"</td><td style="text-align: center">8</td><td style="text-align: center"></td><td style="text-align: center">"avr"</td><td style="text-align: center"></td><td style="text-align: center"></td></tr>
+<tr><td style="text-align: center">"vc4"</td><td style="text-align: center">32</td><td style="text-align: center">littleEndian</td><td style="text-align: center">"vc4"</td><td style="text-align: center"></td><td style="text-align: center"></td></tr>
+<tr><td style="text-align: center">"or1k"</td><td style="text-align: center">32</td><td style="text-align: center">bigEndian</td><td style="text-align: center">"or1k"</td><td style="text-align: center"></td><td style="text-align: center"></td></tr>
+<tr><td style="text-align: center">"js"</td><td style="text-align: center">32</td><td style="text-align: center">littleEndian</td><td style="text-align: center">"js"</td><td style="text-align: center"></td><td style="text-align: center"></td></tr>
+</tbody></table>
+</div>
+<h5 id="cputypes"><a class="header" href="#cputypes">cpuTypes</a></h5>
+<p>cpu之间的兼容性（具有传递性和自反性）如下<sup class="footnote-reference"><a href="#isCompatible">6</a></sup>，</p>
+<p><img src="./images/cpu_isCompatible.dot.svg" alt="" /></p>
+<h4 id="vendor"><a class="header" href="#vendor">vendor</a></h4>
+<p>vendor字符串可取值<code>"apple"</code>, <code>"pc"</code>(windows), <code>"w64"</code>(MinGW-w64), <code>"none"</code>, <code>"unknown"</code>(default)。</p>
+<h4 id="kernel"><a class="header" href="#kernel">kernel</a></h4>
+<p>kernel字符串可取值如下表<sup class="footnote-reference"><a href="#kernels">7</a></sup>，</p>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: center">kernel字符串</th><th style="text-align: center">execFormat</th><th style="text-align: center">families</th></tr></thead><tbody>
+<tr><td style="text-align: center">"macos"</td><td style="text-align: center">macho</td><td style="text-align: center">darwin</td></tr>
+<tr><td style="text-align: center">"darwin"</td><td style="text-align: center">↑</td><td style="text-align: center">↑</td></tr>
+<tr><td style="text-align: center">"ios"</td><td style="text-align: center">macho</td><td style="text-align: center">darwin</td></tr>
+<tr><td style="text-align: center">"watchos"</td><td style="text-align: center">↑</td><td style="text-align: center">↑</td></tr>
+<tr><td style="text-align: center">"tvos"</td><td style="text-align: center">↑</td><td style="text-align: center">↑</td></tr>
+<tr><td style="text-align: center">"freebsd"</td><td style="text-align: center">elf</td><td style="text-align: center">bsd</td></tr>
+<tr><td style="text-align: center">"linux"</td><td style="text-align: center">elf</td><td style="text-align: center"></td></tr>
+<tr><td style="text-align: center">"netbsd"</td><td style="text-align: center">elf</td><td style="text-align: center">bsd</td></tr>
+<tr><td style="text-align: center">"none"</td><td style="text-align: center">unknown</td><td style="text-align: center"></td></tr>
+<tr><td style="text-align: center">"openbsd"</td><td style="text-align: center">elf</td><td style="text-align: center">bsd</td></tr>
+<tr><td style="text-align: center">"solaris"</td><td style="text-align: center">elf</td><td style="text-align: center"></td></tr>
+<tr><td style="text-align: center">"wasi"</td><td style="text-align: center">wasm</td><td style="text-align: center"></td></tr>
+<tr><td style="text-align: center">"redox"</td><td style="text-align: center">elf</td><td style="text-align: center"></td></tr>
+<tr><td style="text-align: center">"windows"</td><td style="text-align: center">pe</td><td style="text-align: center"></td></tr>
+<tr><td style="text-align: center">"win32"</td><td style="text-align: center">↑</td><td style="text-align: center">↑</td></tr>
+<tr><td style="text-align: center">"ghcjs"</td><td style="text-align: center">unknown</td><td style="text-align: center"></td></tr>
+<tr><td style="text-align: center">"genode"</td><td style="text-align: center">elf</td><td style="text-align: center"></td></tr>
+<tr><td style="text-align: center">"mmixware"</td><td style="text-align: center">unknown</td><td style="text-align: center"></td></tr>
+</tbody></table>
+</div>
+<h4 id="abi"><a class="header" href="#abi">abi</a></h4>
+<p>abi字符串可取的值列举如下<sup class="footnote-reference"><a href="#abis">8</a></sup>，</p>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: center">abi字符串</th><th style="text-align: center">float</th><th style="text-align: center">abi</th><th style="text-align: center">Note</th></tr></thead><tbody>
+<tr><td style="text-align: center">"cygnus"</td><td style="text-align: center"></td><td style="text-align: center"></td><td style="text-align: center"></td></tr>
+<tr><td style="text-align: center">"msvc"</td><td style="text-align: center"></td><td style="text-align: center"></td><td style="text-align: center"></td></tr>
+<tr><td style="text-align: center">"eabi"</td><td style="text-align: center">soft</td><td style="text-align: center"></td><td style="text-align: center">for ARM, PowerPC</td></tr>
+<tr><td style="text-align: center">"eabihf"</td><td style="text-align: center">hard</td><td style="text-align: center"></td><td style="text-align: center">for ARM, PowerPC</td></tr>
+<tr><td style="text-align: center">"elf"</td><td style="text-align: center"></td><td style="text-align: center"></td><td style="text-align: center"></td></tr>
+<tr><td style="text-align: center">"androideabi"</td><td style="text-align: center"></td><td style="text-align: center"></td><td style="text-align: center"></td></tr>
+<tr><td style="text-align: center">"android"</td><td style="text-align: center"></td><td style="text-align: center"></td><td style="text-align: center">not 32-bit</td></tr>
+<tr><td style="text-align: center">"gnueabi"</td><td style="text-align: center">soft</td><td style="text-align: center"></td><td style="text-align: center"></td></tr>
+<tr><td style="text-align: center">"gnueabihf"</td><td style="text-align: center">hard</td><td style="text-align: center"></td><td style="text-align: center"></td></tr>
+<tr><td style="text-align: center">"gnu"</td><td style="text-align: center"></td><td style="text-align: center"></td><td style="text-align: center">not 32-bit</td></tr>
+<tr><td style="text-align: center">"gnuabi64"</td><td style="text-align: center"></td><td style="text-align: center">64</td><td style="text-align: center"></td></tr>
+<tr><td style="text-align: center">"musleabi"</td><td style="text-align: center">soft</td><td style="text-align: center"></td><td style="text-align: center"></td></tr>
+<tr><td style="text-align: center">"musleabihf"</td><td style="text-align: center">hard</td><td style="text-align: center"></td><td style="text-align: center"></td></tr>
+<tr><td style="text-align: center">"musl"</td><td style="text-align: center"></td><td style="text-align: center"></td><td style="text-align: center"></td></tr>
+<tr><td style="text-align: center">"uclibceabihf"</td><td style="text-align: center">soft</td><td style="text-align: center"></td><td style="text-align: center"></td></tr>
+<tr><td style="text-align: center">"uclibceabi"</td><td style="text-align: center">hard</td><td style="text-align: center"></td><td style="text-align: center"></td></tr>
+<tr><td style="text-align: center">"uclibc"</td><td style="text-align: center"></td><td style="text-align: center"></td><td style="text-align: center"></td></tr>
+<tr><td style="text-align: center">"unknown"</td><td style="text-align: center"></td><td style="text-align: center"></td><td style="text-align: center"></td></tr>
+</tbody></table>
+</div>
+<h2 id="localsystem和crosssystem的应用"><a class="header" href="#localsystem和crosssystem的应用"><code>localSystem</code>和<code>crossSystem</code>的应用</a></h2>
+<h3 id="aarch64交叉工具链和程序的详细例子"><a class="header" href="#aarch64交叉工具链和程序的详细例子">aarch64交叉工具链和程序的详细例子</a></h3>
+<p>以x86为本地指令集，<code>localSystem</code>和<code>crossSystem</code>的组合有以下效果</p>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: center">↓<code>crossSystem</code>↓ →<code>localSystem</code>→</th><th style="text-align: center">"x86_64-linux"</th><th style="text-align: center">"aarch64-linux"</th></tr></thead><tbody>
+<tr><td style="text-align: center">"x86_64-linux"</td><td style="text-align: center">通常情况</td><td style="text-align: center"></td></tr>
+<tr><td style="text-align: center">"aarch64-linux"</td><td style="text-align: center">交叉编译aarch64</td><td style="text-align: center">原生aarch64应用</td></tr>
+</tbody></table>
+</div>
+<p>因此基于这3种组合，可以在同一个shell环境中配置出3种软件，
+代码见[cross_platform.nix]({{ site.repo_url }}/scripts/shell/cross_platform.nix)。</p>
+<p><code>pkgs_arm_cross</code>软件包的<code>stdenv.cc</code>为x86平台的arm交叉编译器。
+nixpkgs channel只包含了原生x86应用和原生arm应用。
+交叉编译的arm应用和原生arm应用的derivation不一样。
+因此使用<code>pkgs_arm_cross</code>中的应用，
+则会使用交叉编译器从源码开始编译arm应用，
+而不是直接拉取nixpkgs channel的原生arm应用。</p>
+<p><code>pkgs_arm_native</code>软件包包含原生arm软件包。
+从这个软件包拉取的应用和在arm平台的拉取到的应用一致。
+例如<code>figlet</code>将直接从nix channel中拉取。</p>
+<p><code>pkgs</code>即x86原生的软件包。</p>
+<p>shell_cross_platform.nix使用例子，</p>
+<pre><code class="language-bash"># 创建一个新的shell环境，包含stdenv.cc, figlet, qemu
+$ nix-shell shell_cross_platform.nix
+
+# 使用交叉编译工具链的c编译器
+$ aarch64-unknown-linux-gnu-gcc helloworld.c -o helloworld
+$ file helloworld
+helloworld: ELF 64-bit LSB executable, ARM aarch64, version 1 (SYSV), dynamically linked, interpreter /nix/store/01kw0gb38phviarfv3fca49dpqh0qwlx-glibc-aarch64-unknown-linux-gnu-2.33-123/lib/ld-linux-aarch64.so.1, for GNU/Linux 2.6.32, with debug_info, not stripped
+
+# arm原生应用
+$ file `command -v figlet`
+/nix/store/4f70f04bvd664n00jlnzccyzxd35lykw-figlet-2.2.5/bin/figlet: ELF 64-bit LSB executable, ARM aarch64, version 1 (SYSV), dynamically linked, interpreter /nix/store/rjc27shzir243n1w3127w713fijamf6v-glibc-2.33-123/lib/ld-linux-aarch64.so.1, for GNU/Linux 2.6.32, not stripped
+
+# 直接执行figlet会出错
+$ figlet
+bash: /nix/store/4f70f04bvd664n00jlnzccyzxd35lykw-figlet-2.2.5/bin/figlet: cannot execute binary file: Exec format error
+
+# 使用QEMU执行figlet即可
+$ qemu-aarch64 `command -v figlet` miao!
+           _             _
+ _ __ ___ (_) __ _  ___ | |
+| '_ ` _ \| |/ _` |/ _ \| |
+| | | | | | | (_| | (_) |_|
+|_| |_| |_|_|\__,_|\___/(_)
+</code></pre>
+<h3 id="mips交叉工具链的例子"><a class="header" href="#mips交叉工具链的例子">mips交叉工具链的例子</a></h3>
+<p>[cross_mips.nix]({{ site.repo_url }}/scripts/shell/cross_mips.nix)</p>
+<h2 id="引用"><a class="header" href="#引用">引用</a></h2>
+<div class="footnote-definition" id="version"><sup class="footnote-definition-label">1</sup>
+<p>nixpkgs版本2022.01.20, commit hash: 7e149abe9db1509fa974bb2286f862a761ca0a07</p>
+</div>
+<div class="footnote-definition" id="localSystem_crossSystem"><sup class="footnote-definition-label">2</sup>
+<p>nixpkgs/pkgs/top-level/default.nix</p>
+</div>
+<div class="footnote-definition" id="localSystem_crossSystem_type"><sup class="footnote-definition-label">3</sup>
+<p>nixpkgs/lib/systems/default.nix: <code>elaborate</code></p>
+</div>
+<div class="footnote-definition" id="skeleton"><sup class="footnote-definition-label">4</sup>
+<p>nixpkgs/lib/systems/parse.nix: <code>mkSkeletonFromList</code></p>
+</div>
+<div class="footnote-definition" id="cpuTypes"><sup class="footnote-definition-label">5</sup>
+<p>nixpkgs/lib/systems/parse.nix: <code>cpuTypes</code></p>
+</div>
+<div class="footnote-definition" id="isCompatible"><sup class="footnote-definition-label">6</sup>
+<p>nixpkgs/lib/systems/parse.nix: <code>isCompatible</code></p>
+</div>
+<div class="footnote-definition" id="kernels"><sup class="footnote-definition-label">7</sup>
+<p>nixpkgs/lib/systems/parse.nix: <code>kernels</code></p>
+</div>
+<div class="footnote-definition" id="abis"><sup class="footnote-definition-label">8</sup>
+<p>nixpkgs/lib/systems/parse.nix: <code>abis</code></p>
+</div>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../docs/howto/backup_binary_cache.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../../docs/howto/install_nixos.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+            <script src="https://utteranc.es/client.js"
+                    repo="xieby1/nix_config"
+                    issue-term="pathname"
+                    theme="github-light"
+                    crossorigin="anonymous"
+                    async>
+            </script>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../docs/howto/backup_binary_cache.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../../docs/howto/install_nixos.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../../elasticlunr.min.js"></script>
+        <script src="../../mark.min.js"></script>
+        <script src="../../searcher.js"></script>
+
+        <script src="../../clipboard.min.js"></script>
+        <script src="../../highlight.js"></script>
+        <script src="../../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>
